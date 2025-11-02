@@ -19,7 +19,6 @@ func main() {
 
 	r.POST("/user", func(ctx *gin.Context) {
 		var newUser User
-		// fmt.Println("rep", ctx.Data)
 		if err := ctx.BindJSON(&newUser); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
@@ -32,5 +31,5 @@ func main() {
 	r.GET("/users", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, users)
 	})
-	r.Run(":8080")
+	r.Run(":8081")
 }
