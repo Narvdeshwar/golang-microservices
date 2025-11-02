@@ -2,7 +2,7 @@
 FROM golang:1.22
 
 # Set working directory
-WORKDIR /golang-microservices/user-services
+WORKDIR /golang-microservices/payment-services
 
 # Copy code into container
 COPY . .

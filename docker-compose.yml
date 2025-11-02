@@ -1,0 +1,29 @@
+services:
+  user-service:
+    build: ./user-services
+    ports:
+      - "8081:8081"
+    networks:
+      - micro-net
+
+  order-service:
+    build: ./order-services
+    ports:
+      - "8082:8082"
+    depends_on:
+      - user-service
+    networks:
+      - micro-net
+
+  payment-service:
+    build: ./payment-services
+    ports:
+      - "8083:8083"
+    depends_on:
+      - order-service
+    networks:
+      - micro-net
+
+networks:
+  micro-net:
+    driver: bridge
