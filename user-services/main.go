@@ -1,35 +1,16 @@
 package main
 
 import (
-	"net/http"
+	"user-services/handlers"
 
 	"github.com/gin-gonic/gin"
 )
 
-type User struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-
-var users = []User{}
-
 func main() {
-	r := gin.Default() // middleware ke sath ek router return krta hai
+	r := gin.Default()
 
-	r.POST("/user", func(ctx *gin.Context) {
-		var newUser User
-		if err := ctx.BindJSON(&newUser); err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		newUser.Id = len(users) + 1
-		users = append(users, newUser)
-		ctx.JSON(http.StatusOK, newUser)
-	})
+	r.POST("/user", handlers.CreateUser)
+	r.GET("/users", handlers.GetAllUser)
 
-	r.GET("/users", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, users)
-	})
-	r.Run(":8081")
+	r.Run(":8081") // run on port 8081
 }
