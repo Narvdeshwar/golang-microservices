@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   user-service:
     build: ./user-services
@@ -31,6 +32,18 @@ services:
     depends_on:
       - payment-service
       - order-service
+    networks:
+      - micro-net
+
+  user-db:
+    image: postgres:16
+    container_name: user-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: userdb
+    ports:
+      - "5432:5432"
     networks:
       - micro-net
 
