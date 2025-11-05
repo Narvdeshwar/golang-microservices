@@ -24,6 +24,16 @@ services:
     networks:
       - micro-net
 
+  notification-service:
+    build: ./notification-services
+    ports:
+      - "8084:8084"
+    depends_on:
+      - payment-service
+      - order-service
+    networks:
+      - micro-net
+
 networks:
   micro-net:
     driver: bridge
