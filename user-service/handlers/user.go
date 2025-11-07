@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"user-services/db"
 	"user-services/models"
 
 	"github.com/gin-gonic/gin"
@@ -14,9 +15,17 @@ func CreateUser(ctx *gin.Context) {
 	if err := ctx.BindJSON(&newUser); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
-	newUser.ID = len(users) + 1
-	users = append(users, newUser)
-	ctx.JSON(http.StatusOK, newUser)
+
+	database, _ := db.ConnectDB()
+	defer database.Close()
+
+	_, err := database.Exec("Insert into users (name,email) values($1,$2)", newUser.Name, newUser.Email)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create the user"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "User created successfully", "data": newUser})
 }
 
 func GetAllUser(ctx *gin.Context) {
