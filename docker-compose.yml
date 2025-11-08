@@ -1,8 +1,28 @@
 services:
+  user-db:
+    image: postgres:16
+    container_name: user-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: userdb
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - micro-net
+
   user-service:
     build: ./user-service
     ports:
       - "8081:8081"
+    depends_on:
+      user-db:
+        condition: service_healthy
     networks:
       - micro-net
 
@@ -31,18 +51,6 @@ services:
     depends_on:
       - payment-service
       - order-service
-    networks:
-      - micro-net
-
-  user-db:
-    image: postgres:16
-    container_name: user-db
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: userdb
-    ports:
-      - "5432:5432"
     networks:
       - micro-net
 

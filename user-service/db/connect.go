@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	_ "github.com/lib/pq"
 	"log"
 )
 
@@ -11,6 +12,11 @@ func ConnectDB() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+	
 	log.Println("Connected to DB successfully")
 	return db, nil
 }
