@@ -14,12 +14,15 @@ func CreateUser(ctx *gin.Context) {
 	var newUser models.User
 	if err := ctx.BindJSON(&newUser); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	database, _ := db.ConnectDB()
 	defer database.Close()
 
-	_, err := database.Exec("Insert into users (name,email) values($1,$2)", newUser.Name, newUser.Email)
+	err := database.QueryRow("INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id",
+		newUser.Name, newUser.Email,
+	).Scan(&newUser.ID)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create the user"})
