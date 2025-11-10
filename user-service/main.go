@@ -10,7 +10,7 @@ import (
 func main() {
 	database, err := db.ConnectDB()
 	if err != nil {
-		log.Fatal("Error in connecting to DB")
+		log.Fatal("Error in connecting to DB", err)
 	}
 	defer database.Close()
 	r := gin.Default()
