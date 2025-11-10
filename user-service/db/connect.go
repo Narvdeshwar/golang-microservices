@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	"log"
+	"time"
 )
 
 func ConnectDB() (*sql.DB, error) {
@@ -13,10 +14,15 @@ func ConnectDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	if err := db.Ping(); err != nil {
-		return nil, err
+	// Retry loop in case DB is not ready
+	for i := 0; i < 5; i++ {
+		if err := db.Ping(); err == nil {
+			log.Println("Connected to DB successfully")
+			return db, nil
+		}
+		log.Printf("Waiting for DB to be ready... (%d/5)", i+1)
+		time.Sleep(3 * time.Second)
 	}
-	
-	log.Println("Connected to DB successfully")
-	return db, nil
+
+	return nil, err
 }
