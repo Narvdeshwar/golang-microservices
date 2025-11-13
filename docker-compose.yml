@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: userdb
     ports:
       - "5432:5432"
+    volumes:
+      - userdb-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d userdb"]
       interval: 5s
@@ -54,6 +56,8 @@ services:
     networks:
       - micro-net
 
+volumes:
+  userdb-data:
 networks:
   micro-net:
     driver: bridge

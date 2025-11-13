@@ -41,3 +41,13 @@ cat backup.sql | docker exec -i user-db psql -U user -d userdb
 
 Explanation:
 - Restores your backup SQL file into the userdb database.
+
+### Query for creation of database
+```sql
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100)
+);
+
+```

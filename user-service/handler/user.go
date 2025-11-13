@@ -27,6 +27,24 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 }
 
 func (h *Handler) GetAllUser(ctx *gin.Context) {
-
-	ctx.JSON(http.StatusOK, users)
+	rows, err := h.DB.Query("Select *from users")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch the user"})
+		return
+	}
+	defer rows.Close()
+	var users []models.User
+	for rows.Next() {
+		var u models.User
+		if err := rows.Scan(&u.ID, &u.Email, &u.Name); err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error scanning the user data"})
+			return
+		}
+		users = append(users, u)
+	}
+	if len(users) == 0 {
+		ctx.JSON(http.StatusOK, gin.H{"message": "No users found"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"data": users})
 }
