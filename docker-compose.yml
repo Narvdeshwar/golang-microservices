@@ -18,6 +18,25 @@ services:
     networks:
       - micro-net
 
+  order-db:
+    image : postgres:16
+    container_name : order-db
+    environment:
+      POSTGRES_USER : order
+      POSTGRES_PASSWORD : password
+      POSTGRES_DB : orderdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - orderdb-data:/var/lib/postgresql/data
+    healthcheck:
+      test : ["CMD-SHELL","pg_isready -U order -d orderdb"]
+      interval : 5s
+      timeout : 3s
+      retries: 5
+    networks:
+      - micro-net
+
   user-service:
     build: ./user-service
     ports:
@@ -33,6 +52,7 @@ services:
     ports:
       - "8082:8082"
     depends_on:
+      - order-db
       - user-service
     networks:
       - micro-net
@@ -58,6 +78,7 @@ services:
 
 volumes:
   userdb-data:
+  orderdb-data: {}
 networks:
   micro-net:
     driver: bridge
