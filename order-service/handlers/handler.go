@@ -2,6 +2,6 @@ package handlers
 
 import "database/sql"
 
-type Handlers struct {
+type Handler struct {
 	DB *sql.DB
 }
