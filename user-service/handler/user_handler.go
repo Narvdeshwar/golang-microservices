@@ -1,13 +1,14 @@
 package handlers
 
 import (
+	"database/sql"
+	"log"
 	"net/http"
+	"strconv"
 	"user-services/models"
 
 	"github.com/gin-gonic/gin"
 )
-
-var users = []models.User{}
 
 func (h *Handler) CreateUser(ctx *gin.Context) {
 	var newUser models.User
@@ -24,6 +25,28 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "User created successfully", "data": newUser})
+}
+
+func (h *Handler) GetUserById(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user id!"})
+		return
+	}
+	var user models.User
+	query := "select id,name,email from users where id=$1"
+	err = h.DB.QueryRow(query, id).Scan(&user.ID, &user.Name, &user.Email)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+		} else {
+			log.Printf("DB Scan Error: %v", err)
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error scanning user data"})
+		}
+		return
+	}
+	ctx.JSON(http.StatusOK, user)
 }
 
 func (h *Handler) GetAllUser(ctx *gin.Context) {
