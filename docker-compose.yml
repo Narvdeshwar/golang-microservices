@@ -77,7 +77,7 @@ services:
       - micro-net
 
 volumes:
-  userdb-data:
+  userdb-data: {}
   orderdb-data: {}
 networks:
   micro-net:
