@@ -18,6 +18,7 @@ func main() {
 	h := handlers.Handler{DB: database}
 	r := gin.Default()
 	r.POST("/user", h.CreateUser)
+	r.GET("/user/:id", h.GetUserById)
 	r.GET("/users", h.GetAllUser)
-	r.Run(":8081") // run on port 8081
+	r.Run(":8081")
 }
