@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"order-services/models"
 
@@ -15,10 +16,23 @@ func (h *Handler) CreateOrder(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	// !TODO : user validation api required  
-	resp, err := http.Get("http://user-service:8081/users")
-	if err != nil || resp.StatusCode != 200 {
+	// !TODO : user validation api required
+	if newOrder.UserID == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
+		return
+	}
+
+	userURL := fmt.Sprintf("http://user-service:8081/user/%d", newOrder.UserID)
+	resp, err := http.Get(userURL)
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Error connecting to the user services"})
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User not found in user service"})
+		return
 	}
 
 	err = h.DB.QueryRow("Insert into orders (user_id,item,amount) values($1,$2,$3) Returning id", newOrder.UserID, newOrder.Item, newOrder.Amount).Scan(&newOrder.ID)
