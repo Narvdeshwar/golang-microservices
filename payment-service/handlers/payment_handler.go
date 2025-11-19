@@ -34,7 +34,7 @@ func (h *Handler) MakePayment(ctx *gin.Context) {
 
 	defer resp.Body.Close()
 
-	err = h.DB.QueryRow("INSERT into payments(order_id,amount,status) values($1,$2,$3) returing id", pay.OrderID, pay.Amount, "SUCCESS").Scan(&pay.ID)
+	err = h.DB.QueryRow("INSERT into payments(order_id,amount,status) values($1,$2,$3) RETURNING id", pay.OrderID, pay.Amount, "SUCCESS").Scan(&pay.ID)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error recordigng the payment"})

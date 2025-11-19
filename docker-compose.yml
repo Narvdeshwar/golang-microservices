@@ -42,14 +42,14 @@ services:
     container_name: payment-db
     environment:
       POSTGRES_USER: payuser
-      POSTGRES_PASS: paypassword
+      POSTGRES_PASSWORD: paypassword
       POSTGRES_DB: paymentdb
     ports:
       - "5434:5432"
     volumes:
       - paymentdb-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_ready -U payuser -d paymentdb"]
+      test: ["CMD-SHELL", "pg_isready -U payuser -d paymentdb"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -102,6 +102,7 @@ services:
 volumes:
   userdb-data: {}
   orderdb-data: {}
+  paymentdb-data: {}
 networks:
   micro-net:
     driver: bridge
