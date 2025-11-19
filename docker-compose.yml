@@ -19,20 +19,39 @@ services:
       - micro-net
 
   order-db:
-    image : postgres:16
-    container_name : order-db
+    image: postgres:16
+    container_name: order-db
     environment:
-      POSTGRES_USER : order
-      POSTGRES_PASSWORD : password
-      POSTGRES_DB : orderdb
+      POSTGRES_USER: order
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: orderdb
     ports:
       - "5433:5432"
     volumes:
       - orderdb-data:/var/lib/postgresql/data
     healthcheck:
-      test : ["CMD-SHELL","pg_isready -U order -d orderdb"]
-      interval : 5s
-      timeout : 3s
+      test: ["CMD-SHELL", "pg_isready -U order -d orderdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - micro-net
+
+  payment-db:
+    image: postgres:16
+    container_name: payment-db
+    environment:
+      POSTGRES_USER: payuser
+      POSTGRES_PASS: paypassword
+      POSTGRES_DB: paymentdb
+    ports:
+      - "5434:5432"
+    volumes:
+      - paymentdb-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_ready -U payuser -d paymentdb"]
+      interval: 5s
+      timeout: 3s
       retries: 5
     networks:
       - micro-net
@@ -62,7 +81,11 @@ services:
     ports:
       - "8083:8083"
     depends_on:
+      - payment-db
       - order-service
+    environment:
+      ORDER_SERVICE_URL: http://order-service:8082
+      PAYMENT_DB_URL: postgres://payuser:paypassword@payment-db:5432/paymentdb?sslmode=disable
     networks:
       - micro-net
 
