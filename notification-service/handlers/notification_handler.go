@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SendNotification(ctx *gin.Context) {
+func (h *Handler) SendNotification(ctx *gin.Context) {
 	var notification models.Notification
 	if err := ctx.BindJSON(&notification); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
