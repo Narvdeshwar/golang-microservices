@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -40,6 +42,16 @@ func (h *Handler) MakePayment(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error recordigng the payment"})
 		return
 	}
+
+	notificationURL := "http://notification-service:8084/notify"
+	payload := map[string]interface{}{
+		"user_id":  pay.OrderID,
+		"order_id": pay.OrderID,
+		"message":  "Payment received successfully",
+	}
+
+	body, _ := json.Marshal(payload)
+	http.Post(notificationURL, "application/json", bytes.NewBuffer(body))
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "Payment successful", "data": pay})
 }
