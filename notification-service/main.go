@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
+	h := &handlers.Handler{}
 	r := gin.Default()
-	r.POST("/notify", handlers.SendNotification)
+	r.POST("/notify", h.SendNotification)
 	r.Run(":8084")
 }
