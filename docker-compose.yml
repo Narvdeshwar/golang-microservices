@@ -98,6 +98,14 @@ services:
       - order-service
     networks:
       - micro-net
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" #Rabbitmq protocal port
+      - "15672:15672" #Rabbitmq WebUI
+    networks:
+      - mirco-net
 
 volumes:
   userdb-data: {}
