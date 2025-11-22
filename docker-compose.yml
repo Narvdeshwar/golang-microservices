@@ -105,7 +105,7 @@ services:
       - "5672:5672" #Rabbitmq protocal port
       - "15672:15672" #Rabbitmq WebUI
     networks:
-      - mirco-net
+      - micro-net
 
 volumes:
   userdb-data: {}
