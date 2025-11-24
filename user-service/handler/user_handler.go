@@ -71,3 +71,33 @@ func (h *Handler) GetAllUser(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"data": users})
 }
+
+func (h *Handler) DeleteUser(ctx *gin.Context) {
+	idParam := ctx.Param("id")
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "User id is invalid"})
+		return
+	}
+
+	query := "DELETE from users where id=$1"
+	result, err := h.DB.Exec(query, id)
+	if err != nil {
+		log.Printf("Error deleting the user %v", err)
+	}
+
+	rowAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("No row affected issue in deleting the user")
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching database result"})
+		return
+	}
+
+	if rowAffected == 0 {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"error": "User data deleted successfully"})
+
+}
