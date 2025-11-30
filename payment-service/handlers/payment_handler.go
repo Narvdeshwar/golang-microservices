@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"payment-services/models"
 
 	"github.com/gin-gonic/gin"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func (h *Handler) MakePayment(ctx *gin.Context) {
@@ -49,6 +51,36 @@ func (h *Handler) MakePayment(ctx *gin.Context) {
 		"order_id": pay.OrderID,
 		"message":  "Payment received successfully",
 	}
+
+	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+	if err != nil {
+		log.Println("Failed to connect the rabbit mq", err)
+		return
+	}
+
+	defer conn.Close()
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Println("Failed to open channel:", err)
+		return
+	}
+	defer ch.Close()
+
+	queue, err := ch.QueueDeclare("Payment notification", true, false, false, false, nil)
+	if err != nil {
+		log.Println("Failed to declare the Queue", err)
+		return
+	}
+
+	msg := fmt.Sprintf("Payment successfully recevied %d", pay.OrderID)
+
+	err = ch.Publish("", queue.Name, false, false, amqp.Publishing{ContentType: "text/plain", Body: []byte(msg)})
+	if err != nil {
+		log.Println("Error in publishing the channel", err)
+		return
+	}
+
+	log.Println("Notification sent to queue:", msg)
 
 	body, _ := json.Marshal(payload)
 	http.Post(notificationURL, "application/json", bytes.NewBuffer(body))
