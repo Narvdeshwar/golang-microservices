@@ -22,6 +22,8 @@ func main() {
 
 	r.GET("/orders", h.GetAllOrder)
 
+	r.GET("/orders/:id", h.GetOrderById)
+
 	r.Run(":8082")
 
 }

@@ -66,3 +66,16 @@ func (h *Handler) GetAllOrder(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"data": orders})
 }
+
+
+func (h *Handler) GetOrderById(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var o models.Order
+	query := "SELECT id,user_id,item,amount from orders where id=$1"
+	err := h.DB.QueryRow(query, id).Scan(&o.ID, &o.Amount, &o.Item, &o.UserID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"data": o})
+}

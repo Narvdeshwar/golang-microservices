@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -26,7 +24,7 @@ func (h *Handler) MakePayment(ctx *gin.Context) {
 	}
 
 	// Order url creation
-	orderURL := fmt.Sprintf("%s/order/%d", os.Getenv("ORDER_SERVICE_URL"), pay.OrderID)
+	orderURL := fmt.Sprintf("%s/orders/%d", os.Getenv("ORDER_SERVICE_URL"), pay.OrderID)
 
 	// getting the order url to check whether the order has been crated or not
 	resp, err := http.Get(orderURL)
@@ -43,13 +41,6 @@ func (h *Handler) MakePayment(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error recordigng the payment"})
 		return
-	}
-
-	notificationURL := "http://notification-service:8084/notify"
-	payload := map[string]interface{}{
-		"user_id":  pay.OrderID,
-		"order_id": pay.OrderID,
-		"message":  "Payment received successfully",
 	}
 
 	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
@@ -81,9 +72,5 @@ func (h *Handler) MakePayment(ctx *gin.Context) {
 	}
 
 	log.Println("Notification sent to queue:", msg)
-
-	body, _ := json.Marshal(payload)
-	http.Post(notificationURL, "application/json", bytes.NewBuffer(body))
-
 	ctx.JSON(http.StatusOK, gin.H{"message": "Payment successful", "data": pay})
 }

@@ -2,7 +2,7 @@
 ```bash
 docker exec -it user-db psql -U user -d userdb
 ```
-| Part          | Meaning                                      | Description                                                                           |
+| Part          | Meaning                                      | Description                                                                          |
 | ------------- | -------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `docker exec` | Run a command **inside a running container** | Lets you interact with a container that’s already up.                                 |
 | `-it`         | **Interactive + TTY mode**                   | `-i` keeps STDIN open, `-t` gives you a terminal — so you can type commands.          |
