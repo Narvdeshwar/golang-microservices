@@ -10,8 +10,10 @@ import (
 
 func main() {
 	database, err := db.ConnectDB()
+	log.Print("trying to connect", database, err)
 	if err != nil {
 		log.Fatal("Error in connecting to DB", err)
+		return
 	}
 	defer database.Close()
 

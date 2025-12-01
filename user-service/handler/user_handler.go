@@ -72,6 +72,10 @@ func (h *Handler) GetAllUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"data": users})
 }
 
+func (h *Handler) UpdateUser(ctx *gin.Context){
+	
+}
+
 func (h *Handler) DeleteUser(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 
