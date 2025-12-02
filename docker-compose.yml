@@ -56,6 +56,20 @@ services:
     networks:
       - micro-net
 
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+    environment:
+      POSTGRES_USER: authuser
+      POSTGRES_PASSWORD: authpass
+      POSTGRES_DB: authdb
+    ports:
+      - "5435:5432"
+    volumes:
+      - authdb-data:/var/lib/postgresql/data
+    networks:
+      - micro-net
+
   user-service:
     build: ./user-service
     ports:
@@ -108,11 +122,25 @@ services:
       RABBIT_MQ_URL: amqp://guest:guest@rabbitmq:5672/
     networks:
       - micro-net
+  
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - auth-db
+    networks:
+      - micro-net
+    environment:
+      AUTH_DB_URL: postgres://authuser:authpass@auth-db:5432/authdb?sslmode=disable
+      JWT_SECRET: ItsSecretcomposer
 
 volumes:
   userdb-data: {}
   orderdb-data: {}
   paymentdb-data: {}
+  authdb-data: {}
 networks:
   micro-net:
     driver: bridge
