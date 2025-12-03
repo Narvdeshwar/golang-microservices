@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"auth-service/models"
+	"auth-service/utils"
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,4 +23,37 @@ func (h *Handler) RegisterUser(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "user register successfully", "user_id": user.ID})
+}
+
+func (h *Handler) LoginUser(ctx *gin.Context) {
+	var input struct {
+		Email    string `json:"email" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+	var user models.User
+
+	if err := ctx.BindJSON(&input); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid input data"})
+		return
+	}
+	err := h.DB.QueryRow("Select id,password from users where email=$1", input.Email).Scan(&user.ID, &user.Password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Email or password"})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		}
+		return
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Password"})
+		return
+	}
+	token, err := utils.GenerateJWT(user.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating the token"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"token": token})
 }
