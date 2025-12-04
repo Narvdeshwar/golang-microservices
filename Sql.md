@@ -50,5 +50,9 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100),
     password varchar(100)
 );
+```
 
+### Auth-table
+```sql
+create table users(id serial primary key,email varchar(255) not null unique,password varchar(255) not null);
 ```

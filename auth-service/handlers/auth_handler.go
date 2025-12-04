@@ -52,7 +52,7 @@ func (h *Handler) LoginUser(ctx *gin.Context) {
 	}
 	token, err := utils.GenerateJWT(user.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating the token"})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"token": token})
