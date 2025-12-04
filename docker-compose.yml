@@ -67,6 +67,11 @@ services:
       - "5435:5432"
     volumes:
       - authdb-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d userdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - micro-net
 
@@ -125,7 +130,6 @@ services:
   
   auth-service:
     build: ./auth-service
-    container_name: auth-service
     ports:
       - "8085:8085"
     depends_on:
