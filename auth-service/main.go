@@ -11,7 +11,7 @@ import (
 func main() {
 	database, err := db.ConnectDB()
 	if err != nil {
-		log.Println("Error connecting to database")
+		log.Println("Error connecting to database", err)
 		return
 	}
 	defer database.Close()
