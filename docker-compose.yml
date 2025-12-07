@@ -141,6 +141,16 @@ services:
     environment:
       AUTH_DB_URL: postgres://authuser:authpass@auth-db:5432/authdb?sslmode=disable
       JWT_SECRET: ItsSecretcomposer
+  
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    environment:
+      JWT_SECRET: ItsSecretcomposer
+    networks:
+      - micro-net
 
 volumes:
   userdb-data: {}
