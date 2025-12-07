@@ -84,6 +84,8 @@ services:
         condition: service_healthy
     networks:
       - micro-net
+    environment:
+      JWT_SECRET: ItsSecretcomposer
 
   order-service:
     build: ./order-service
@@ -127,7 +129,7 @@ services:
       RABBIT_MQ_URL: amqp://guest:guest@rabbitmq:5672/
     networks:
       - micro-net
-  
+
   auth-service:
     build: ./auth-service
     ports:

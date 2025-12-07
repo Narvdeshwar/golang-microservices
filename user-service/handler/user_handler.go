@@ -28,6 +28,13 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 }
 
 func (h *Handler) GetUserById(ctx *gin.Context) {
+	userId, exits := ctx.Get("user_id")
+	if !exits {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	log.Println("UserId", userId)
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -72,8 +79,8 @@ func (h *Handler) GetAllUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"data": users})
 }
 
-func (h *Handler) UpdateUser(ctx *gin.Context){
-	
+func (h *Handler) UpdateUser(ctx *gin.Context) {
+
 }
 
 func (h *Handler) DeleteUser(ctx *gin.Context) {
