@@ -9,11 +9,12 @@ import (
 
 func ReverseProxy(target string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		url, _ := url.Parse(target)
-		proxy := httputil.NewSingleHostReverseProxy(url)
-		ctx.Request.URL.Host = url.Host
-		ctx.Request.URL.Scheme = url.Scheme
-		ctx.Request.Host = url.Host
+		remote, _ := url.Parse(target)
+		proxy := httputil.NewSingleHostReverseProxy(remote)
+		ctx.Request.URL.Path = ctx.Param("any")
+		ctx.Request.Host = remote.Host
+		ctx.Request.URL.Host = remote.Host
+		ctx.Request.URL.Scheme = remote.Scheme
 		proxy.ServeHTTP(ctx.Writer, ctx.Request)
 	}
 }

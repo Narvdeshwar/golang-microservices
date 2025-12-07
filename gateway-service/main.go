@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gateway-service/middleware"
+	// "gateway-service/middleware"
 	"gateway-service/routes"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.Use(middleware.AuthMiddleware())
+	// r.Use(middleware.AuthMiddleware())
 
 	r.Any("/api/auth/*any", routes.ReverseProxy("http://auth-service:8085"))
 	r.Any("/api/user/*any", routes.ReverseProxy("http://user-service:8081"))
