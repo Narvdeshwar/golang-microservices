@@ -4,6 +4,7 @@ import (
 	"log"
 	"order-services/db"
 	handlers "order-services/handlers"
+	"order-services/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,7 @@ func main() {
 
 	h := &handlers.Handler{DB: database}
 	r := gin.Default()
+	r.Use(middleware.AuthMiddleware())
 
 	r.POST("/orders", h.CreateOrder)
 
