@@ -4,6 +4,7 @@ import (
 	"log"
 	"payment-services/db"
 	"payment-services/handlers"
+	"payment-services/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,8 +16,9 @@ func main() {
 	}
 
 	h := &handlers.Handler{DB: database}
-	
+
 	r := gin.Default()
+	r.Use(middleware.AuthMiddleware())
 	r.POST("/payment", h.MakePayment)
 	r.Run(":8083")
 }
