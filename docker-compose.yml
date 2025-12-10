@@ -123,8 +123,8 @@ services:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672" #Rabbitmq protocal port
-      - "15672:15672" #Rabbitmq WebUI
+      - "5672:5672" 
+      - "15672:15672"
     environment:
       RABBIT_MQ_URL: amqp://guest:guest@rabbitmq:5672/
     networks:

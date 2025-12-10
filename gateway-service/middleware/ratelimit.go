@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/ulule/limiter/v3"
 	mGin "github.com/ulule/limiter/v3/drivers/middleware/gin"
@@ -8,18 +10,14 @@ import (
 )
 
 func RateLimiter() gin.HandlerFunc {
-	// 60 requests per minute per IP
 	rate := limiter.Rate{
-		Period: 60 * 1e9, // 60 seconds
+		Period: 1 * time.Minute,
 		Limit:  60,
 	}
 
-	// In-memory storage
-	store := memory.NewStore()
+	store := memory.NewStore() // Uses system RAM which may choke the system
 
-	// Create limiter
 	instance := limiter.New(store, rate)
 
-	// Gin middleware
 	return mGin.NewMiddleware(instance)
 }
