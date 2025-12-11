@@ -10,7 +10,7 @@ import (
 func main() {
 	r := gin.Default()
 	r.Use(middleware.AuthMiddleware())
-	r.Use(middleware.RateLimiter())
+	r.Use(middleware.RedisRateLimiter())
 
 	r.Any("/api/auth/*any", routes.ReverseProxy("http://auth-service:8085"))
 	r.Any("/api/user/*any", routes.ReverseProxy("http://user-service:8081"))
