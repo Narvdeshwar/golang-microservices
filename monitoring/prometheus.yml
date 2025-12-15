@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "gateway"
+    static_configs:
+      - targets: ["gateway-service:8080"]
+
+  - job_name: "user-service"
+    static_configs:
+      - targets: ["user-service:8081"]
+
+  - job_name: "order-service"
+    static_configs:
+      - targets: ["order-service:8082"]
+
+  - job_name: "payment-service"
+    static_configs:
+      - targets: ["payment-service:8083"]

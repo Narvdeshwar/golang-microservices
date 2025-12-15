@@ -7,6 +7,7 @@ import (
 	"user-services/middleware"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -27,5 +28,6 @@ func main() {
 	r.GET("/user/:id", h.GetUserById)
 	r.GET("/users", h.GetAllUser)
 	r.DELETE("/user/:id", h.DeleteUser)
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	r.Run(":8081")
 }
