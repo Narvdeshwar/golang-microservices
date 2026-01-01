@@ -28,6 +28,7 @@ func (h *Handler) CreateUser(ctx *gin.Context) {
 }
 
 func (h *Handler) GetUserById(ctx *gin.Context) {
+	log.Println("ctx", ctx)
 	userId, exits := ctx.Get("user_id")
 	if !exits {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
